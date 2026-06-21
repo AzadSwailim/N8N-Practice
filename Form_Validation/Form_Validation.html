@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Validation</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+
+<div>
+    <div>
+        <h1>Test Registration</h1>
+    </div>
+
+    <div>
+        <form onsubmit="Validate(event)">
+
+            <label class="form-label">Name:</label>
+            <input id="Name" type="text" placeholder="John Doe">
+            <p id="NameError" class="error"></p>
+
+            <label class="form-label">Age:</label>
+            <input id="Age" type="number" placeholder="21">
+            <p id="AgeError" class="error"></p>
+
+            <label class="form-label">Email:</label>
+            <input id="Email" type="email" placeholder="example@gmail.com">
+            <p id="EmailError" class="error"></p>
+
+            <label class="form-label">RRN:</label>
+            <input id="RRN" type="number" placeholder="230071601038">
+            <p id="RRNError" class="error"></p>
+
+            <label class="form-label">Select Department:</label>
+            <select id="Dept">
+                <option value="">--Select Department--</option>
+                <option value="CSE">Computer Science Engineering</option>
+                <option value="AIDS">Artificial Intelligence & Data Science</option>
+                <option value="IT">Information Technology</option>
+            </select>
+            <p id="SelectError" class="error"></p>
+
+            <label class="form-label">Do You Want Personalized Advertisements?</label>
+
+            <input type="radio" name="ads" value="Yes">
+            <label>Yes</label>
+
+            <input type="radio" name="ads" value="No">
+            <label>No</label>
+
+            <p id="RadioError" class="error"></p>
+
+            <button class="btn" type="submit">Submit</button>
+
+        </form>
+    </div>
+</div>
+
+<script>
+
+function Validate(event){
+
+    event.preventDefault();
+
+    // Clear previous errors
+    document.getElementById("NameError").innerHTML = "";
+    document.getElementById("AgeError").innerHTML = "";
+    document.getElementById("EmailError").innerHTML = "";
+    document.getElementById("RRNError").innerHTML = "";
+    document.getElementById("SelectError").innerHTML = "";
+    document.getElementById("RadioError").innerHTML = "";
+
+    let isValid = true;
+
+    // Name Validation
+    let name = document.getElementById("Name").value.trim();
+
+    if(name.length < 3){
+        document.getElementById("NameError").innerHTML = "Invalid Name";
+        isValid = false;
+    }
+
+    // Age Validation
+    let age = document.getElementById("Age").value;
+
+    if(age == "" || age < 18){
+        document.getElementById("AgeError").innerHTML = "Must be over 18 to apply.";
+        isValid = false;
+    }
+
+    // Email Validation
+    let email = document.getElementById("Email").value.trim();
+
+    if(email == ""){
+        document.getElementById("EmailError").innerHTML = "Invalid Email";
+        isValid = false;
+    }
+
+    // RRN Validation
+    let rrn = document.getElementById("RRN").value;
+
+    if(rrn.length != 12){
+        document.getElementById("RRNError").innerHTML = "RRN must contain exactly 12 digits.";
+        isValid = false;
+    }
+
+    // Department Validation
+    let dept = document.getElementById("Dept").value;
+
+    if(dept == ""){
+        document.getElementById("SelectError").innerHTML = "Please select a department.";
+        isValid = false;
+    }
+
+    // Radio Button Validation
+    let ads = document.querySelector('input[name="ads"]:checked');
+
+    if(ads == null){
+        document.getElementById("RadioError").innerHTML = "Please choose Yes or No.";
+        isValid = false;
+    }
+
+    // Success
+    if(isValid){
+        let FormData = {
+            name: document.getElementById("Name").value,
+            age: document.getElementById("Age").value,
+            email: document.getElementById("Email").value,
+            rrn: document.getElementById("RRN").value,
+            department: document.getElementById("Dept").value,
+            ads: document.querySelector('input[name="ads"]:checked').value
+        }
+        fetch("https://swailim.app.n8n.cloud/webhook-test/registration", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/JSON"
+            },
+            body: JSON.stringify(FormData)
+        });
+    }
+
+}
+
+</script>
+
+</body>
+</html>
