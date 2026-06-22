@@ -1,0 +1,229 @@
+{
+  "name": "Web Scraper",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        -16
+      ],
+      "id": "ba19e832-1554-4717-a73f-05967a8d8c7e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "    https://books.toscrape.com",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "291c91f9-0fc4-4cf4-847c-2f558947f5ce",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a intelligent, helpful website scraping assistent."
+            },
+            {
+              "content": "Your task is to take input as a scrapped website and return output as json that follows this format:\n\n{\n  [\"bookTitle\":\"\",\"price\":\"\",\"availability\":\"\",\"rating\":\"\"],\n  [\"bookTitle\":\"\",\"price\":\"\",\"availability\":\"\",\"rating\":\"\"]\n}\n\nscrape the first page only"
+            },
+            {
+              "content": "=--\n\nhere is the content:  {{ $json.data }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "30a8f4fa-0287-411d-a369-bcca1344d905",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qM5fMJsIG5DS4Nsk",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JPCcxN0AjHyAbqKtMIoMuXnVoshKmXOBzSpZvk6wSwg",
+          "mode": "list",
+          "cachedResultName": "N8N Test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JPCcxN0AjHyAbqKtMIoMuXnVoshKmXOBzSpZvk6wSwg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JPCcxN0AjHyAbqKtMIoMuXnVoshKmXOBzSpZvk6wSwg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.bookTitle }}",
+            "Price": "={{ $json.price }}",
+            "Availability": "={{ $json.availability }}",
+            "Rating": "={{ $json.rating }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Availability",
+              "displayName": "Availability",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        -16
+      ],
+      "id": "5ea46b5f-b3a8-4023-b352-a51eeb813fce",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "o7iuTE0bWX5X1YXz",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.first().json.output[0].content[0].text;\nconst books = JSON.parse(text);\nreturn books.map(book => ({\n  json: book\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        -16
+      ],
+      "id": "d1d58161-cc31-4a77-a367-92f7faa1717e",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "06d20aef-9b46-4f34-92e7-8f4637b6b808",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "16844e897b5e585f899a108cc7862be0affd31b2479037af47267f8838569fbb"
+  },
+  "nodeGroups": [],
+  "id": "3OFJq49cam6AOeyx",
+  "tags": []
+}

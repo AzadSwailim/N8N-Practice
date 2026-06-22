@@ -1,0 +1,203 @@
+{
+  "name": "Form Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Example form",
+        "formDescription": "This is a test form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Enter Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "example@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Age",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Appointment Date",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Select Available Appointment Time",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "6:30"
+                  },
+                  {
+                    "option": "7:30"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f7f41819-04be-4453-a1fa-236166f31dc1",
+      "name": "On form submission",
+      "webhookId": "06ac8fdb-b5f8-47ad-97db-806c9f617128"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Act as professional email writer to confim the date of appionment.\n\nhere are the neccesary details:\nName: {{ $json.Name }} \nEmail: {{ $json.Email }} \nAge: {{ $json.Age}}\nAppointment Date: {{ $json['Appointment Date'] }}\nTime: {{ $json['Select Available Appointment Time'] }}\nRemove the subject line\nDear (Name),\n\nThis is to confirm your appointment on (Appointment Date) at (Time). We have\nyour age recorded as (Age).\n\nPlease reply to confirm that this time works for you, or let us know\nif you need to reschedule.\n\nThank you,\n\nAzad Swailim"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "93369c65-ce5f-40e5-8e3a-d1f4e84feaff",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qM5fMJsIG5DS4Nsk",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Reg: Appointment Confirmation",
+        "emailType": "text",
+        "message": "={{ $json.output[0].content[0].text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        0
+      ],
+      "id": "ad7cb6f3-9ab6-418b-9b52-9aa6dea683f0",
+      "name": "Send a message",
+      "webhookId": "65635439-3dcf-4d40-a7f7-31f921272e08",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pi4Tn6xdIBROzaPY",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Name": "Shafiq",
+          "Email": "swailim17feb@gmail.com",
+          "Age": 21,
+          "Appointment Date": "2026-06-23",
+          "Select Available Appointment Time": "7:30",
+          "submittedAt": "2026-06-20T14:43:52.243+05:30",
+          "formMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Message a model": [
+      {
+        "json": {
+          "output": [
+            {
+              "id": "msg_0fc4a26ff71ef35a006a36753cfa0481969dcd57a7b0c582ab",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "Dear Shafiq,\n\nThis is to confirm your appointment on June 23, 2026 at 7:30. We have your age recorded as 21.\n\nPlease reply to confirm that this time works for you, or let us know if you need to reschedule.\n\nThank you,\n\nAzad Swailim"
+                }
+              ],
+              "role": "assistant"
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "481b0b6c-1993-423d-a9f4-faa4fdbba648",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "16844e897b5e585f899a108cc7862be0affd31b2479037af47267f8838569fbb"
+  },
+  "nodeGroups": [],
+  "id": "a3vvkjVVSagxO7hD",
+  "tags": []
+}

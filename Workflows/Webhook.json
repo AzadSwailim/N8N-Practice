@@ -1,0 +1,185 @@
+{
+  "name": "Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "registration",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5ff164a9-a8a7-415f-af9d-5490a791d676",
+      "name": "Webhook",
+      "webhookId": "25e7c9e0-725d-4b5c-acdc-989ab21e958d"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.email }}",
+        "subject": "Reg: Registration Confirmation",
+        "emailType": "text",
+        "message": "=Dear {{$json.body.name}},\n\nWelcome to LearnHub!\n\nWe are pleased to confirm that your course registration has been successfully received.\n\nBelow are the registration details we have on record:\n\n• Name: {{$json.body.name}}\n\n• Age: {{$json.body.age}}\n\n• Email: {{$json.body.email}}\n\n• Registration Number (RRN): {{$json.body.rrn}}\n\n• Department: {{$json.body.department}}\n\n• Personalized Advertisements: {{$json.body.ads}}\n\nOur team will review your registration, and you will receive additional information regarding course commencement, orientation, and other important updates via email.\n\nIf any of the above information is incorrect, please reply to this email so we can update your registration details.\n\nThank you for choosing LearnHub. We look forward to supporting you on your learning journey.\n\nBest regards,\n\nThe LearnHub Team\n\nsupport@learnhub.com",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        0
+      ],
+      "id": "0bc87002-18b3-472a-be1c-0821581336cc",
+      "name": "Send a message",
+      "webhookId": "65635439-3dcf-4d40-a7f7-31f921272e08",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pi4Tn6xdIBROzaPY",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JPCcxN0AjHyAbqKtMIoMuXnVoshKmXOBzSpZvk6wSwg",
+          "mode": "list",
+          "cachedResultName": "N8N Test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JPCcxN0AjHyAbqKtMIoMuXnVoshKmXOBzSpZvk6wSwg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JPCcxN0AjHyAbqKtMIoMuXnVoshKmXOBzSpZvk6wSwg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.body.name }}",
+            "Age": "={{ $json.body.age }}",
+            "Email": "={{ $json.body.email }}",
+            "RRN": "={{ $json.body.rrn }}",
+            "Department": "={{ $json.body.department }}",
+            "Personalized Learning": "={{ $json.body.ads }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RRN",
+              "displayName": "RRN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Personalized Learning",
+              "displayName": "Personalized Learning",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        -144
+      ],
+      "id": "b8b04b33-e932-4f24-8928-07b841c5dde5",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "o7iuTE0bWX5X1YXz",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "30578e48-c1d4-41c4-958c-ac0e58ac564f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "16844e897b5e585f899a108cc7862be0affd31b2479037af47267f8838569fbb"
+  },
+  "nodeGroups": [],
+  "id": "D1DCeajdhx0ovQDo",
+  "tags": []
+}
