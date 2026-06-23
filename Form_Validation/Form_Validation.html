@@ -6,41 +6,46 @@
 </head>
 <body>
 
-<div>
+<div class="card">
     <div>
-        <h1>Test Registration</h1>
+        <h1 class="content-box-h1">Test Registration</h1>
     </div>
 
     <div>
         <form onsubmit="Validate(event)">
 
             <label class="form-label">Name:</label>
-            <input id="Name" type="text" placeholder="John Doe">
+            <br>
+            <input id="Name" type="text" placeholder="Enter Your Name">
             <p id="NameError" class="error"></p>
 
             <label class="form-label">Age:</label>
-            <input id="Age" type="number" placeholder="21">
+            <br>
+            <input id="Age" type="number" placeholder="Enter Your Age">
             <p id="AgeError" class="error"></p>
 
             <label class="form-label">Email:</label>
-            <input id="Email" type="email" placeholder="example@gmail.com">
+            <br>
+            <input id="Email" type="email" placeholder="Enter Email Id">
             <p id="EmailError" class="error"></p>
 
             <label class="form-label">RRN:</label>
-            <input id="RRN" type="number" placeholder="230071601038">
+            <br>
+            <input id="RRN" type="number" placeholder="Enter RRN">
             <p id="RRNError" class="error"></p>
 
             <label class="form-label">Select Department:</label>
+            <br>
             <select id="Dept">
-                <option value="">--Select Department--</option>
+                <option value="">Select Department</option>
                 <option value="CSE">Computer Science Engineering</option>
                 <option value="AIDS">Artificial Intelligence & Data Science</option>
                 <option value="IT">Information Technology</option>
             </select>
             <p id="SelectError" class="error"></p>
 
-            <label class="form-label">Do You Want Personalized Personalized Learning Experience ?</label>
-
+            <label class="form-label">Personalized Learning Experience ?</label>
+            <br>
             <input type="radio" name="ads" value="Yes">
             <label>Yes</label>
 
@@ -48,9 +53,9 @@
             <label>No</label>
 
             <p id="RadioError" class="error"></p>
-
-            <button class="btn" type="submit">Submit</button>
-
+            <div class="btn-container">
+                <button class="btn" type="submit">Submit</button>
+            </div>
         </form>
     </div>
 </div>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n AI Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="chat-shell">
+        <section class="chat-panel" aria-label="AI chatbot">
+            <header class="chat-header">
+                <div>
+                    <p class="eyebrow">n8n workflow assistant</p>
+                    <h1>AI Chatbot</h1>
+                </div> 
+            </header>
+
+            <div id="chatBox" class="chat-box" aria-live="polite">
+                <div class="message bot">
+                    <span class="avatar">AI</span>
+                    <p>Hey, I am ready. Ask me anything.</p>
+                </div>
+            </div>
+
+            <form class="input-area" onsubmit="sendMessage(event)">
+                <input id="message" type="text" placeholder="Type your message..." autocomplete="off" aria-label="Message">
+                <button id="sendButton" type="submit">Send</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const WEBHOOK = "https://swailim.app.n8n.cloud/webhook/aad83dce-5d18-4082-8c12-7cc98fed8659";
+        const chatBox = document.getElementById("chatBox");
+        const sendButton = document.getElementById("sendButton");
+
+        function addMessage(text, sender) {
+            const message = document.createElement("div");
+            message.className = `message ${sender}`;
+
+            const avatar = document.createElement("span");
+            avatar.className = "avatar";
+            avatar.textContent = sender === "user" ? "You" : "AI";
+
+            const bubble = document.createElement("p");
+            bubble.textContent = text;
+
+            message.append(avatar, bubble);
+            chatBox.appendChild(message);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            return message;
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+
+            const input = document.getElementById("message");
+            const message = input.value.trim();
+            if (message === "") return;
+
+            addMessage(message, "user");
+            input.value = "";
+            sendButton.disabled = true;
+
+            const loadingMessage = addMessage("Thinking...", "bot loading");
+
+            try {
+                const response = await fetch(WEBHOOK, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        sessionId: "User1",
+                        chatInput: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+
+                const data = await response.json();
+                loadingMessage.querySelector("p").textContent = data.output || "I got a response, but it was empty.";
+                loadingMessage.classList.remove("loading");
+            } catch (error) {
+                loadingMessage.querySelector("p").textContent = "Something went wrong. Please try again.";
+                loadingMessage.classList.remove("loading");
+                loadingMessage.classList.add("error");
+            } finally {
+                sendButton.disabled = false;
+                input.focus();
+            }
+        }
+    </script>
+</body>
+</html>
